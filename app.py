@@ -376,9 +376,24 @@ Projects:{projects}
 
 """
 
-        resume=model.generate_content(
-        prompt
-        ).text
+        from google.api_core.exceptions import ResourceExhausted
+import time
+
+resume = None
+
+for attempt in range(3):
+    try:
+        response = model.generate_content(prompt)
+        resume = response.text
+        break
+
+    except ResourceExhausted:
+        time.sleep(5)
+
+if resume:
+    st.write(resume)
+else:
+    st.error("Too many users are using the app now. Please try again.")
 
         st.write(
         resume
