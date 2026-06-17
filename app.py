@@ -333,6 +333,7 @@ def pdf_create(text):
 # RESUME PAGE
 # -------------------------
 
+
 if selected=="Resume Builder":
 
     st.markdown(
@@ -343,24 +344,18 @@ if selected=="Resume Builder":
     st.title("📄 Resume Builder")
 
     name = st.text_input("Name")
-
     email = st.text_input("Email")
-
     skills = st.text_area("Skills")
-
     projects = st.text_area("Projects")
 
     if st.button("Generate Resume"):
 
         prompt = f"""
-Create ATS Resume
+Generate ATS-friendly resume
 
 Name: {name}
-
 Email: {email}
-
 Skills: {skills}
-
 Projects: {projects}
 """
 
@@ -369,10 +364,10 @@ Projects: {projects}
 
         resume = None
 
-        # Retry if API quota temporarily exceeded
         for attempt in range(5):
 
             try:
+
                 with st.spinner("Generating Resume..."):
 
                     response = model.generate_content(
@@ -389,9 +384,13 @@ Projects: {projects}
 
         if resume:
 
-            st.success("Resume Generated Successfully!")
+            st.success(
+                "Resume generated successfully!"
+            )
 
-            st.write(resume)
+            st.write(
+                resume
+            )
 
             st.session_state.history.append({
 
@@ -421,8 +420,8 @@ Projects: {projects}
 
         else:
 
-            st.error(
-                "Server busy. Please try again after 1 minute."
+            st.warning(
+                "Please click Generate Resume again."
             )
 
     st.markdown(
