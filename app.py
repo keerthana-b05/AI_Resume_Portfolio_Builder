@@ -327,6 +327,8 @@ def pdf_create(text):
     return file
 
 
+
+
 # -------------------------
 # RESUME PAGE
 # -------------------------
@@ -334,103 +336,99 @@ def pdf_create(text):
 if selected=="Resume Builder":
 
     st.markdown(
-    "<div class='glass'>",
-    unsafe_allow_html=True
+        "<div class='glass'>",
+        unsafe_allow_html=True
     )
 
-    st.title(
-    "📄 Resume Builder"
-    )
+    st.title("📄 Resume Builder")
 
-    name=st.text_input(
-    "Name"
-    )
+    name = st.text_input("Name")
 
-    email=st.text_input(
-    "Email"
-    )
+    email = st.text_input("Email")
 
-    skills=st.text_area(
-    "Skills"
-    )
+    skills = st.text_area("Skills")
 
-    projects=st.text_area(
-    "Projects"
-    )
+    projects = st.text_area("Projects")
 
-    if st.button(
-    "Generate Resume"
-    ):
+    if st.button("Generate Resume"):
 
-        prompt=f"""
-
+        prompt = f"""
 Create ATS Resume
 
-Name:{name}
+Name: {name}
 
-Email:{email}
+Email: {email}
 
-Skills:{skills}
+Skills: {skills}
 
-Projects:{projects}
-
+Projects: {projects}
 """
 
         from google.api_core.exceptions import ResourceExhausted
-import time
+        import time
 
-resume = None
+        resume = None
 
-for attempt in range(3):
-    try:
-        response = model.generate_content(prompt)
-        resume = response.text
-        break
+        # Retry if API quota temporarily exceeded
+        for attempt in range(5):
 
-    except ResourceExhausted:
-        time.sleep(5)
+            try:
+                with st.spinner("Generating Resume..."):
 
-if resume:
-    st.write(resume)
-else:
-    st.error("Too many users are using the app now. Please try again.")
+                    response = model.generate_content(
+                        prompt
+                    )
 
-        st.write(
-        resume
-        )
+                    resume = response.text
 
-        st.session_state.history.append({
+                break
 
-        "resume":resume,
-        "date":datetime.now()
+            except ResourceExhausted:
 
-        })
+                time.sleep(5)
 
-        pdf=pdf_create(
-        resume
-        )
+        if resume:
 
-        with open(
-        pdf,
-        "rb"
-        ) as f:
+            st.success("Resume Generated Successfully!")
 
-            st.download_button(
+            st.write(resume)
 
-            "Download PDF",
+            st.session_state.history.append({
 
-            f,
+                "resume": resume,
+                "date": datetime.now()
 
-            file_name="resume.pdf"
+            })
 
+            pdf = pdf_create(
+                resume
+            )
+
+            with open(
+                pdf,
+                "rb"
+            ) as f:
+
+                st.download_button(
+
+                    "📥 Download PDF",
+
+                    f,
+
+                    file_name="resume.pdf"
+
+                )
+
+        else:
+
+            st.error(
+                "Server busy. Please try again after 1 minute."
             )
 
     st.markdown(
-    "</div>",
-    unsafe_allow_html=True
+        "</div>",
+        unsafe_allow_html=True
     )
-
-
 
 # -------------------------
 # PORTFOLIO BUILDER
