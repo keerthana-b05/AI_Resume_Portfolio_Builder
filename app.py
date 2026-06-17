@@ -381,10 +381,8 @@ Projects: {projects}
             except ResourceExhausted:
 
                 time.sleep(5)
-
-        if resume:
-
-    st.success("Resume generated successfully!")
+if resume:
+st.success("Resume generated successfully!")
 
 else:
 
