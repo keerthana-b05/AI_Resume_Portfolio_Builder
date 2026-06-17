@@ -384,46 +384,45 @@ Projects: {projects}
 
         if resume:
 
-            st.success(
-                "Resume generated successfully!"
-            )
+    st.success("Resume generated successfully!")
 
-            st.write(
-                resume
-            )
+else:
 
-            st.session_state.history.append({
+    # Backup resume if Gemini fails
+    resume = f"""
+# {name}
 
-                "resume": resume,
-                "date": datetime.now()
+Email: {email}
 
-            })
+## Skills
+{skills}
 
-            pdf = pdf_create(
-                resume
-            )
+## Projects
+{projects}
 
-            with open(
-                pdf,
-                "rb"
-            ) as f:
+## Profile Summary
+Motivated candidate with skills in {skills}.
+Seeking opportunities to apply knowledge and contribute effectively.
+"""
 
-                st.download_button(
+st.write(resume)
 
-                    "📥 Download PDF",
+st.session_state.history.append({
 
-                    f,
+    "resume": resume,
+    "date": datetime.now()
 
-                    file_name="resume.pdf"
+})
 
-                )
+pdf = pdf_create(resume)
 
-        else:
+with open(pdf, "rb") as f:
 
-            st.warning(
-                "Please click Generate Resume again."
-            )
-
+    st.download_button(
+        "📥 Download PDF",
+        f,
+        file_name="resume.pdf"
+    )
     st.markdown(
         "</div>",
         unsafe_allow_html=True
