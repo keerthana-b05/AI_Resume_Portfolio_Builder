@@ -334,7 +334,11 @@ def pdf_create(text):
 # -------------------------
 
 
-if selected=="Resume Builder":
+# -------------------------
+# RESUME PAGE
+# -------------------------
+
+if selected == "Resume Builder":
 
     st.markdown(
         "<div class='glass'>",
@@ -381,52 +385,51 @@ Projects: {projects}
             except ResourceExhausted:
 
                 time.sleep(5)
- if resume:
 
-st.success("Resume generated successfully!")
+        if not resume:
 
-else:
-
-    # Backup resume if Gemini fails
-    resume = f"""
-# {name}
+            # fallback if Gemini fails
+            resume = f"""
+{name}
 
 Email: {email}
 
-## Skills
+Skills:
 {skills}
 
-## Projects
+Projects:
 {projects}
 
-## Profile Summary
-Motivated candidate with skills in {skills}.
+Profile Summary:
+Motivated candidate with experience in {skills}.
 Seeking opportunities to apply knowledge and contribute effectively.
 """
 
-st.write(resume)
+        st.success("Resume Generated Successfully!")
 
-st.session_state.history.append({
+        st.write(resume)
 
-    "resume": resume,
-    "date": datetime.now()
+        st.session_state.history.append({
 
-})
+            "resume": resume,
+            "date": datetime.now()
 
-pdf = pdf_create(resume)
+        })
 
-with open(pdf, "rb") as f:
+        pdf = pdf_create(resume)
 
-    st.download_button(
-        "📥 Download PDF",
-        f,
-        file_name="resume.pdf"
-    )
+        with open(pdf, "rb") as f:
+
+            st.download_button(
+                "📥 Download PDF",
+                f,
+                file_name="resume.pdf"
+            )
+
     st.markdown(
         "</div>",
         unsafe_allow_html=True
     )
-
 # -------------------------
 # PORTFOLIO BUILDER
 # -------------------------
